@@ -3,190 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lovify - Rencontre Moderne</title>
+    <title>Lovify - Rencontres en Ligne</title>
     <style>
-        :root {
-            --primary-color: #ff4b2b;
-            --secondary-color: #ff416c;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); }
-
-        navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            padding: 15px 20px; color: white;
-        }
-        navbar h1 { font-size: 1.5rem; }
-        navbar div button {
-            background: transparent; border: 1px solid white; color: white;
-            padding: 8px 12px; border-radius: 20px; cursor: pointer; margin-left: 5px;
-        }
-
-        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .hidden { display: none !important; }
-
-        .auth-card {
-            background: var(--card-bg); max-width: 420px; margin: 40px auto;
-            padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .auth-card input, .auth-card select, .auth-card textarea {
-            width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px;
-        }
-        .btn-main {
-            width: 100%; background: var(--primary-color); color: white; border: none;
-            padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;
-        }
-        .toggle-auth {
-            text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem; cursor: pointer;
-        }
-        .toggle-auth span { color: var(--primary-color); font-weight: bold; }
-
-        .discover-container { display: flex; flex-direction: column; align-items: center; }
-        .profile-card {
-            background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 15px;
-            overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15); text-align: center;
-        }
-        .profile-card img { width: 100%; height: 350px; object-fit: cover; }
-        .profile-info { padding: 20px; }
-        .actions { display: flex; justify-content: space-around; padding: 15px; background: #fafafa; }
-        .btn-action {
-            width: 60px; height: 60px; border-radius: 50%; border: none;
-            font-size: 24px; cursor: pointer; transition: transform 0.2s;
-        }
-        .btn-like { background: #e8f5e9; color: #2e7d32; }
-        .btn-dislike { background: #ffebee; color: #c62828; }
-        .btn-action:hover { transform: scale(1.1); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 420px; background: #ffffff; min-height: 100vh; display: flex; flex-direction: column; border-left: 1px solid #ddd; border-right: 1px solid #ddd; position: relative; }
+        header { background: linear-gradient(135deg, #ff4b2b, #ff416c); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .section { display: none; padding: 20px; flex: 1; flex-direction: column; }
+        .active { display: flex; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: #555; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
+        button { width: 100%; padding: 12px; background: #ff416c; border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #e0355c; }
+        .card { background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 20px; text-align: center; margin-bottom: 20px; }
+        .card h3 { color: #333; margin-bottom: 8px; }
+        .card p { color: #666; font-size: 0.9rem; }
+        .swipe-btns { display: flex; gap: 10px; }
+        .btn-dislike { background: #aaa; }
+        .btn-like { background: #28a745; }
+        nav { display: flex; background: #fff; border-top: 1px solid #eee; position: sticky; bottom: 0; }
+        nav button { flex: 1; margin: 0; border-radius: 0; background: none; color: #666; font-size: 0.8rem; padding: 10px 0; }
+        nav button.active-nav { color: #ff416c; font-weight: bold; }
+        .match-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <navbar>
-        <h1>🔥 Lovify</h1>
-        <div id="nav-actions">
-            <button onclick="showSection('auth-login-section')">Connexion</button>
-            <button onclick="showSection('auth-register-section')">Inscription</button>
-        </div>
-    </navbar>
+<div class="app-container">
+    <header>💖 Lovify</header>
 
-    <div class="container">
-        <!-- FORMULAIRE DE CONNEXION -->
-        <section id="auth-login-section" class="auth-card">
-            <h2>Bienvenue</h2>
-            <form id="login-form">
-                <input type="email" id="login-email" placeholder="Email" required>
-                <input type="password" id="login-password" placeholder="Mot de passe" required>
-                <button type="submit" class="btn-main">Se connecter</button>
-            </form>
-            <p class="toggle-auth" onclick="showSection('auth-register-section')">
-                Pas encore de compte ? <span>Inscrivez-vous</span>
-            </p>
-        </section>
-
-        <!-- FORMULAIRE D'INSCRIPTION AVEC PHOTO -->
-        <section id="auth-register-section" class="auth-card hidden">
-            <h2>Créer un compte</h2>
-            <form id="register-form" enctype="multipart/form-data">
-                <input type="text" id="reg-name" placeholder="Nom complet" required>
-                <input type="email" id="reg-email" placeholder="Email" required>
-                <input type="password" id="reg-password" placeholder="Mot de passe" required>
-                <input type="number" id="reg-age" placeholder="Âge" min="18" max="99" required>
-                <select id="reg-gender" required>
-                    <option value="">Sélectionnez votre genre</option>
+    <!-- SECTION INSCRIPTION -->
+    <div id="register-section" class="section active">
+        <h2 style="margin-bottom: 15px; color: #333;">Inscription</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label>Nom complet</label>
+                <input type="text" id="reg-name" required placeholder="Ex: Jean Dupont">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="reg-email" required placeholder="Ex: jean@mail.com">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="reg-password" required placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Âge</label>
+                <input type="number" id="reg-age" required min="18" value="25">
+            </div>
+            <div class="form-group">
+                <label>Genre</label>
+                <select id="reg-gender">
                     <option value="Homme">Homme</option>
                     <option value="Femme">Femme</option>
                 </select>
-                <input type="text" id="reg-city" placeholder="Ville" required>
-                <textarea id="reg-bio" placeholder="Parlez un peu de vous..." rows="2"></textarea>
-                
-                <label style="font-size: 0.85rem; color: #555; display: block; margin-top: 5px;">Ajoutez votre photo de profil :</label>
-                <input type="file" id="reg-photo" accept="image/*" required>
-
-                <button type="submit" class="btn-main">S'inscrire</button>
-            </form>
-            <p class="toggle-auth" onclick="showSection('auth-login-section')">
-                Déjà un compte ? <span>Connectez-vous</span>
-            </p>
-        </section>
-
-        <!-- DÉCOUVERTES ET MATCHS -->
-        <section id="discover-section" class="discover-container hidden">
-            <div class="profile-card">
-                <img id="user-photo" src="" alt="Photo de profil">
-                <div class="profile-info">
-                    <h2 id="user-name-age">Nom, 25</h2>
-                    <p id="user-city">Ville</p>
-                    <p id="user-bio">Description de l'utilisateur...</p>
-                </div>
-                <div class="actions">
-                    <button class="btn-action btn-dislike" onclick="handleInteraction('dislike')">❌</button>
-                    <button class="btn-action btn-like" onclick="handleInteraction('like')">❤️</button>
-                </div>
             </div>
-        </section>
+            <div class="form-group">
+                <label>Ville</label>
+                <input type="text" id="reg-city" required placeholder="Ex: Paris, Abidjan...">
+            </div>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea id="reg-bio" rows="2" placeholder="Parlez-nous de vous..."></textarea>
+            </div>
+            <button type="submit">S'inscrire</button>
+        </form>
+        <p style="text-align:center; margin-top: 15px; font-size: 0.85rem;">Déjà inscrit ? <a href="#" onclick="showSection('login-section')">Se connecter</a></p>
     </div>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script>
-        const API_URL = `${window.location.origin}/api`;
-        let token = localStorage.getItem('token');
-        let currentUser = null;
-        let activeProfiles = [];
-        let currentProfileIndex = 0;
-        const socket = io(window.location.origin);
+    <!-- SECTION CONNEXION -->
+    <div id="login-section" class="section">
+        <h2 style="margin-bottom: 15px; color: #333;">Connexion</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="login-email" required placeholder="Ex: jean@mail.com">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="login-password" required placeholder="••••••••">
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
+        <p style="text-align:center; margin-top: 15px; font-size: 0.85rem;">Pas encore de compte ? <a href="#" onclick="showSection('register-section')">S'inscrire</a></p>
+    </div>
 
-        function showSection(sectionId) {
-            ['auth-login-section', 'auth-register-section', 'discover-section'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
+    <!-- SECTION DÉCOUVERTE (SWIPE) -->
+    <div id="discover-section" class="section">
+        <div id="card-container">
+            <!-- Profil affiché dynamiquement -->
+        </div>
+    </div>
+
+    <!-- SECTION MATCHS -->
+    <div id="matches-section" class="section">
+        <h2 style="margin-bottom: 15px; color: #333;">Vos Matchs</h2>
+        <div id="matches-list">
+            <!-- Liste des matchs dynamique -->
+        </div>
+    </div>
+
+    <!-- NAVIGATION BAS -->
+    <nav id="bottom-nav" style="display: none;">
+        <button onclick="showSection('discover-section')" class="active-nav">Découvrir</button>
+        <button onclick="showSection('matches-section')">Matchs</button>
+        <button onclick="logout()">Déconnexion</button>
+    </nav>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // Configuration URL dynamique pour Render
+    const API_URL = `${window.location.origin}/api`;
+    const socket = io();
+
+    let token = localStorage.getItem('token');
+    let currentUser = null;
+    let discoverProfiles = [];
+    let currentProfileIndex = 0;
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+
+        const nav = document.getElementById('bottom-nav');
+        if (sectionId === 'register-section' || sectionId === 'login-section') {
+            nav.style.display = 'none';
+        } else {
+            nav.style.display = 'flex';
         }
 
-        // Inscription avec envoi multipart/form-data
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('full_name', document.getElementById('reg-name').value);
-            formData.append('email', document.getElementById('reg-email').value);
-            formData.append('password', document.getElementById('reg-password').value);
-            formData.append('age', document.getElementById('reg-age').value);
-            formData.append('gender', document.getElementById('reg-gender').value);
-            formData.append('city', document.getElementById('reg-city').value);
-            formData.append('bio', document.getElementById('reg-bio').value);
-            
-            const photoInput = document.getElementById('reg-photo');
-            if (photoInput.files[0]) {
-                formData.append('photo', photoInput.files[0]);
-            }
+        if (sectionId === 'discover-section') loadDiscoverProfiles();
+        if (sectionId === 'matches-section') loadMatches();
+    }
 
+    // Inscription
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
             const res = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    full_name: document.getElementById('reg-name').value,
+                    email: document.getElementById('reg-email').value,
+                    password: document.getElementById('reg-password').value,
+                    age: document.getElementById('reg-age').value,
+                    gender: document.getElementById('reg-gender').value,
+                    city: document.getElementById('reg-city').value,
+                    bio: document.getElementById('reg-bio').value
+                })
             });
-
             const data = await res.json();
-            if (data.token) {
+            if (res.ok && data.token) {
                 token = data.token;
                 currentUser = data.user;
                 localStorage.setItem('token', token);
-                socket.emit('join_room', currentUser.id);
-                alert("Compte créé avec succès !");
-                loadProfiles();
+                alert("Bienvenue sur Lovify !");
                 showSection('discover-section');
             } else {
-                alert(data.error);
+                alert(data.error || "Erreur lors de l'inscription");
             }
-        });
+        } catch (err) {
+            console.error(err);
+            alert("Impossible de contacter le serveur.");
+        }
+    });
 
-        // Connexion
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Connexion
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
             const res = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -196,62 +185,114 @@
                 })
             });
             const data = await res.json();
-            if (data.token) {
+            if (res.ok && data.token) {
                 token = data.token;
                 currentUser = data.user;
                 localStorage.setItem('token', token);
-                socket.emit('join_room', currentUser.id);
-                loadProfiles();
                 showSection('discover-section');
             } else {
-                alert(data.error);
+                alert(data.error || "Identifiants incorrects");
             }
-        });
+        } catch (err) {
+            console.error(err);
+            alert("Erreur de connexion.");
+        }
+    });
 
-        // Charger les profils
-        async function loadProfiles() {
-            const res = await fetch(`${API_URL}/users/search`, {
+    // Charger les profils à swiper
+    async function loadDiscoverProfiles() {
+        const container = document.getElementById('card-container');
+        try {
+            const res = await fetch(`${API_URL}/users/discover`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            activeProfiles = await res.json();
+            discoverProfiles = await res.json();
             currentProfileIndex = 0;
             renderCurrentProfile();
+        } catch (err) {
+            container.innerHTML = "<p>Erreur lors du chargement des profils.</p>";
+        }
+    }
+
+    function renderCurrentProfile() {
+        const container = document.getElementById('card-container');
+        if (currentProfileIndex >= discoverProfiles.length) {
+            container.innerHTML = "<div class='card'><h3>Plus de profils disponibles</h3><p>Revenez plus tard pour de nouvelles rencontres !</p></div>";
+            return;
         }
 
-        function renderCurrentProfile() {
-            if (!activeProfiles || activeProfiles.length === 0 || currentProfileIndex >= activeProfiles.length) {
-                document.getElementById('discover-section').innerHTML = "<h3>Plus de profils disponibles. Créez un autre compte avec une photo pour tester !</h3>";
-                return;
-            }
-            const profile = activeProfiles[currentProfileIndex];
-            document.getElementById('user-photo').src = profile.photo.startsWith('http') ? profile.photo : `http://localhost:3000${profile.photo}`;
-            document.getElementById('user-name-age').innerText = `${profile.full_name}, ${profile.age}`;
-            document.getElementById('user-city').innerText = `📍 ${profile.city}`;
-            document.getElementById('user-bio').innerText = profile.bio || 'Aucune description.';
-        }
+        const profile = discoverProfiles[currentProfileIndex];
+        container.innerHTML = `
+            <div class="card">
+                <h3>${profile.full_name}, ${profile.age} ans</h3>
+                <p>📍 ${profile.city}</p>
+                <p style="margin-top: 10px; italic;">"${profile.bio || 'Aucune description'}"</p>
+            </div>
+            <div class="swipe-btns">
+                <button class="btn-dislike" onclick="handleSwipe('${profile.id}', 'dislike')">❌ Pass</button>
+                <button class="btn-like" onclick="handleSwipe('${profile.id}', 'like')">❤️ Like</button>
+            </div>
+        `;
+    }
 
-        // Action Like / Dislike
-        async function handleInteraction(type) {
-            if (!activeProfiles[currentProfileIndex]) return;
-            const receiverId = activeProfiles[currentProfileIndex].id;
-
-            const res = await fetch(`${API_URL}/interactions`, {
+    async function handleSwipe(targetUserId, action) {
+        try {
+            const res = await fetch(`${API_URL}/interactions/swipe`, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ receiver_id: receiverId, type })
+                body: JSON.stringify({ target_user_id: targetUserId, action })
             });
-
             const data = await res.json();
-            if (data.match) {
+            if (data.isMatch) {
                 alert("🎉 C'est un Match !");
             }
-
             currentProfileIndex++;
             renderCurrentProfile();
+        } catch (err) {
+            console.error(err);
         }
-    </script>
+    }
+
+    // Charger la liste des matchs
+    async function loadMatches() {
+        const listContainer = document.getElementById('matches-list');
+        try {
+            const res = await fetch(`${API_URL}/matches`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const matches = await res.json();
+            if (matches.length === 0) {
+                listContainer.innerHTML = "<p style='color:#777;'>Aucun match pour le moment. Continuez à liker !</p>";
+                return;
+            }
+            listContainer.innerHTML = matches.map(m => `
+                <div class="match-item">
+                    <div>
+                        <strong>${m.partner.full_name}</strong>
+                        <br><small>📍 ${m.partner.city}</small>
+                    </div>
+                    <span>💬</span>
+                </div>
+            `).join('');
+        } catch (err) {
+            listContainer.innerHTML = "<p>Erreur lors du chargement des matchs.</p>";
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        token = null;
+        currentUser = null;
+        showSection('login-section');
+    }
+
+    // Initialisation
+    if (token) {
+        showSection('discover-section');
+    }
+</script>
 </body>
 </html>
