@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lovify - Rencontre Moderne</title>
+    <style>
+        :root {
+            --primary-color: #ff4b2b;
+            --secondary-color: #ff416c;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); }
+
+        navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            padding: 15px 20px; color: white;
+        }
+        navbar h1 { font-size: 1.5rem; }
+        navbar div button {
+            background: transparent; border: 1px solid white; color: white;
+            padding: 8px 12px; border-radius: 20px; cursor: pointer; margin-left: 5px;
+        }
+
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        .hidden { display: none !important; }
+
+        .auth-card {
+            background: var(--card-bg); max-width: 420px; margin: 40px auto;
+            padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .auth-card input, .auth-card select, .auth-card textarea {
+            width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px;
+        }
+        .btn-main {
+            width: 100%; background: var(--primary-color); color: white; border: none;
+            padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;
+        }
+        .toggle-auth {
+            text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem; cursor: pointer;
+        }
+        .toggle-auth span { color: var(--primary-color); font-weight: bold; }
+
+        .discover-container { display: flex; flex-direction: column; align-items: center; }
+        .profile-card {
+            background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 15px;
+            overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15); text-align: center;
+        }
+        .profile-card img { width: 100%; height: 350px; object-fit: cover; }
+        .profile-info { padding: 20px; }
+        .actions { display: flex; justify-content: space-around; padding: 15px; background: #fafafa; }
+        .btn-action {
+            width: 60px; height: 60px; border-radius: 50%; border: none;
+            font-size: 24px; cursor: pointer; transition: transform 0.2s;
+        }
+        .btn-like { background: #e8f5e9; color: #2e7d32; }
+        .btn-dislike { background: #ffebee; color: #c62828; }
+        .btn-action:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <navbar>
+        <h1>🔥 Lovify</h1>
+        <div id="nav-actions">
+            <button onclick="showSection('auth-login-section')">Connexion</button>
+            <button onclick="showSection('auth-register-section')">Inscription</button>
+        </div>
+    </navbar>
+
+    <div class="container">
+        <!-- FORMULAIRE DE CONNEXION -->
+        <section id="auth-login-section" class="auth-card">
+            <h2>Bienvenue</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Mot de passe" required>
+                <button type="submit" class="btn-main">Se connecter</button>
+            </form>
+            <p class="toggle-auth" onclick="showSection('auth-register-section')">
+                Pas encore de compte ? <span>Inscrivez-vous</span>
+            </p>
+        </section>
+
+        <!-- FORMULAIRE D'INSCRIPTION AVEC PHOTO -->
+        <section id="auth-register-section" class="auth-card hidden">
+            <h2>Créer un compte</h2>
+            <form id="register-form" enctype="multipart/form-data">
+                <input type="text" id="reg-name" placeholder="Nom complet" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Mot de passe" required>
+                <input type="number" id="reg-age" placeholder="Âge" min="18" max="99" required>
+                <select id="reg-gender" required>
+                    <option value="">Sélectionnez votre genre</option>
+                    <option value="Homme">Homme</option>
+                    <option value="Femme">Femme</option>
+                </select>
+                <input type="text" id="reg-city" placeholder="Ville" required>
+                <textarea id="reg-bio" placeholder="Parlez un peu de vous..." rows="2"></textarea>
+                
+                <label style="font-size: 0.85rem; color: #555; display: block; margin-top: 5px;">Ajoutez votre photo de profil :</label>
+                <input type="file" id="reg-photo" accept="image/*" required>
+
+                <button type="submit" class="btn-main">S'inscrire</button>
+            </form>
+            <p class="toggle-auth" onclick="showSection('auth-login-section')">
+                Déjà un compte ? <span>Connectez-vous</span>
+            </p>
+        </section>
+
+        <!-- DÉCOUVERTES ET MATCHS -->
+        <section id="discover-section" class="discover-container hidden">
+            <div class="profile-card">
+                <img id="user-photo" src="" alt="Photo de profil">
+                <div class="profile-info">
+                    <h2 id="user-name-age">Nom, 25</h2>
+                    <p id="user-city">Ville</p>
+                    <p id="user-bio">Description de l'utilisateur...</p>
+                </div>
+                <div class="actions">
+                    <button class="btn-action btn-dislike" onclick="handleInteraction('dislike')">❌</button>
+                    <button class="btn-action btn-like" onclick="handleInteraction('like')">❤️</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const API_URL = `${window.location.origin}/api`;
+        let token = localStorage.getItem('token');
+        let currentUser = null;
+        let activeProfiles = [];
+        let currentProfileIndex = 0;
+        const socket = io(window.location.origin);
+
+        function showSection(sectionId) {
+            ['auth-login-section', 'auth-register-section', 'discover-section'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Inscription avec envoi multipart/form-data
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('full_name', document.getElementById('reg-name').value);
+            formData.append('email', document.getElementById('reg-email').value);
+            formData.append('password', document.getElementById('reg-password').value);
+            formData.append('age', document.getElementById('reg-age').value);
+            formData.append('gender', document.getElementById('reg-gender').value);
+            formData.append('city', document.getElementById('reg-city').value);
+            formData.append('bio', document.getElementById('reg-bio').value);
+            
+            const photoInput = document.getElementById('reg-photo');
+            if (photoInput.files[0]) {
+                formData.append('photo', photoInput.files[0]);
+            }
+
+            const res = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            if (data.token) {
+                token = data.token;
+                currentUser = data.user;
+                localStorage.setItem('token', token);
+                socket.emit('join_room', currentUser.id);
+                alert("Compte créé avec succès !");
+                loadProfiles();
+                showSection('discover-section');
+            } else {
+                alert(data.error);
+            }
+        });
+
+        // Connexion
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('login-email').value,
+                    password: document.getElementById('login-password').value
+                })
+            });
+            const data = await res.json();
+            if (data.token) {
+                token = data.token;
+                currentUser = data.user;
+                localStorage.setItem('token', token);
+                socket.emit('join_room', currentUser.id);
+                loadProfiles();
+                showSection('discover-section');
+            } else {
+                alert(data.error);
+            }
+        });
+
+        // Charger les profils
+        async function loadProfiles() {
+            const res = await fetch(`${API_URL}/users/search`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            activeProfiles = await res.json();
+            currentProfileIndex = 0;
+            renderCurrentProfile();
+        }
+
+        function renderCurrentProfile() {
+            if (!activeProfiles || activeProfiles.length === 0 || currentProfileIndex >= activeProfiles.length) {
+                document.getElementById('discover-section').innerHTML = "<h3>Plus de profils disponibles. Créez un autre compte avec une photo pour tester !</h3>";
+                return;
+            }
+            const profile = activeProfiles[currentProfileIndex];
+            document.getElementById('user-photo').src = profile.photo.startsWith('http') ? profile.photo : `http://localhost:3000${profile.photo}`;
+            document.getElementById('user-name-age').innerText = `${profile.full_name}, ${profile.age}`;
+            document.getElementById('user-city').innerText = `📍 ${profile.city}`;
+            document.getElementById('user-bio').innerText = profile.bio || 'Aucune description.';
+        }
+
+        // Action Like / Dislike
+        async function handleInteraction(type) {
+            if (!activeProfiles[currentProfileIndex]) return;
+            const receiverId = activeProfiles[currentProfileIndex].id;
+
+            const res = await fetch(`${API_URL}/interactions`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ receiver_id: receiverId, type })
+            });
+
+            const data = await res.json();
+            if (data.match) {
+                alert("🎉 C'est un Match !");
+            }
+
+            currentProfileIndex++;
+            renderCurrentProfile();
+        }
+    </script>
+</body>
+</html>
